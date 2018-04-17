@@ -2,35 +2,21 @@
 package demo.Java.Eclipse.ConnectMySQL.GUI;
 
 import java.awt.EventQueue;
-
 import javax.swing.*;
-
-import java.awt.event.ActionListener;
-import java.awt.event.ActionEvent;
-
+import javax.swing.table.DefaultTableModel;
+import java.awt.event.*;
 import java.sql.*;
-
 
 public class MainForm {
 	private JFrame frame = new JFrame();
 	
-	JButton btnNewButton = new JButton("New button");
+	JButton btnNewButton = new JButton("Show data");
 	JEditorPane editorPane = new JEditorPane();	
-	JButton btnNewButton_1 = new JButton("New button");
-	Connection con =null; 
-    //Массив содержащий информацию для таблицы
-	Object[] headers = { "Name", "Surname"};
-    Object[][] data = {
-        { "Record 1", "test 1", "111111" },
-        { "Record 2", "test 2", "222222" },
-        { "Record 3", "test 3", "333333" },
-        { "Record 4", "test 4", "444444" },
-        { "Record 5", "test 5", "555555" },
-        { "Record 6", "test 6", "666666" },
-        { "Record 7", "test 7", "777777" },
-        { "Record 8", "test 8", "888888" },
-    };
-    private JTable table = new JTable(data, headers);    
+	JButton btnNewButton_1 = new JButton("Clear");
+	Connection con =null;     
+    
+    DefaultTableModel model = new DefaultTableModel();
+    private JTable table = new JTable(model);    
 	
 	String url = "jdbc:mysql://localhost/testdb";
 	String user = "testdbuser";
@@ -53,7 +39,9 @@ public class MainForm {
 		initialize();
 	}
 
-	private void initialize() {		
+	private void initialize() {
+		model.addColumn("Z1");
+		model.addColumn("Z2");
 		frame.setBounds(100, 100, 634, 534);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.getContentPane().setLayout(null);	
@@ -62,8 +50,13 @@ public class MainForm {
 		frame.getContentPane().add(btnNewButton);		
 		btnNewButton_1.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				editorPane.setText("TEST 3333");
-				
+				editorPane.setText("Clear data from grid");				
+				int RowCount = model.getRowCount();			
+				while (RowCount > 0) {
+					System.out.println(RowCount + "row Cleared");
+					model.removeRow(RowCount-1);
+				RowCount--;
+				}
 			}
 		});
 		
@@ -77,11 +70,8 @@ public class MainForm {
 		frame.getContentPane().add(editorPane);
 		
 		btnNewButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent arg0) {
-				// Button press handler
-				System.out.println("Button pressed");
-				editorPane.setText("TEST 2222");
-				
+			
+			public void actionPerformed(ActionEvent arg0) {							
 				System.out.println("Test Connection to MySQL");
 				try {
 					Class.forName("com.mysql.jdbc.Driver");
@@ -103,31 +93,22 @@ public class MainForm {
 					
 					String sql;
 				    sql = "SELECT id, name FROM items";
-				    ResultSet rs = statment.executeQuery(sql);				    
-				    
-				    //table.add(data);
+				    ResultSet rs = statment.executeQuery(sql);	 
 				    
 				    while(rs.next()){		       
 				         int id  = rs.getInt("id");
 				         String name = rs.getString("name");  
-				         System.out.print("ID: " + id);		        
-				         System.out.println("Name" + name);
-				         editorPane.setText("ID: " + id + "," + "Name" + name);	
-				         //String[] row = {rs.getString("id"),rs.getString("name")};
-				         
-				         				         
+				         System.out.print("ID: " + id + "; Name:" + name + "\n");			        
+				         editorPane.setText("Add data to grid");	
+				         model.addRow(new Object[] {id,name});				         			         				         
 				    }		      
 				    rs.close();
 				    statment.close();
 				    con.close();
 				      
-				} catch (SQLException e) {
-					// TODO Auto-generated catch block
+				} catch (SQLException e) {					
 					e.printStackTrace();
-		}
-				
-				
-								
+				}								
 			}
 		});		
 		
