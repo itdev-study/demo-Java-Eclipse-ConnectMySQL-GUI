@@ -1,4 +1,4 @@
-//Batch for demo DB connection in GUI - v Alpha 1.2
+//Batch for demo DB connection in GUI basic - v Alpha 1.2
 package demo.Java.Eclipse.ConnectMySQL.GUI;
 
 import java.awt.EventQueue;
